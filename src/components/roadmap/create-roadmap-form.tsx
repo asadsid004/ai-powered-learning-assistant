@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { createRoadmap } from "@/app/actions/roadmap";
 import { useTransition } from "react";
+import { redirect } from "next/navigation";
 
 const formSchema = z.object({
   title: z.string().min(1).min(2).max(100),
@@ -55,9 +56,10 @@ export default function CreateRoadmapForm() {
       const data = await createRoadmap(values);
 
       if (!data.success) {
-        toast.error(`Error creating roadmap: ${data.error}`);
+        toast.error(`Error creating journey: ${data.error}`);
       } else {
-        toast.success("Roadmap generated successfully");
+        toast.success("Journey generated successfully");
+        redirect("/journey");
       }
     });
   }

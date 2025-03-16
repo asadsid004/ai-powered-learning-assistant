@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { generateRoadmap, RoadmapInput } from "@/lib/gemini-roadmap";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
+import { error } from "console";
 
 export async function createRoadmap(input: RoadmapInput) {
   const { getUser } = getKindeServerSession();
@@ -103,7 +104,11 @@ export async function createRoadmap(input: RoadmapInput) {
         }
       }
 
-      return redirect("/roadmaps");
+      return {
+        success: true,
+        roadmapId: roadmap.id,
+        error: "",
+      };
     });
   } catch (error) {
     console.error("Failed to create roadmap:", error);
