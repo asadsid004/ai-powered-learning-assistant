@@ -12,7 +12,7 @@ const CreateRoadmapPage = () => {
     <div>
       <Card className="m-4 border-none shadow-none max-w-3xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-2xl tracking-tight">
+          <CardTitle className="text-2xl tracking-tight font-bold">
             Create Journey
           </CardTitle>
           <CardDescription className="tracking-wide">
