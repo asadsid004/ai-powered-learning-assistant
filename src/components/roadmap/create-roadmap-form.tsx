@@ -23,6 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { createRoadmap } from "@/app/actions/roadmap";
+import { useTransition } from "react";
 
 const formSchema = z.object({
   title: z.string().min(1).min(2).max(100),
@@ -34,6 +36,8 @@ const formSchema = z.object({
 });
 
 export default function CreateRoadmapForm() {
+  const [isPending, startTransition] = useTransition();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,18 +50,16 @@ export default function CreateRoadmapForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      console.log(values);
-      toast(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
-    } catch (error) {
-      console.error("Form submission error", error);
-      toast.error("Failed to submit the form. Please try again.");
-    }
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    startTransition(async () => {
+      const data = await createRoadmap(values);
+
+      if (!data.success) {
+        toast.error(`Error creating roadmap: ${data.error}`);
+      } else {
+        toast.success("Roadmap generated successfully");
+      }
+    });
   }
 
   return (
@@ -178,7 +180,15 @@ export default function CreateRoadmapForm() {
               <FormItem>
                 <FormLabel>Duration (weeks)</FormLabel>
                 <FormControl>
-                  <Input placeholder="10" type="number" {...field} />
+                  <Input
+                    defaultValue={field.value}
+                    onChange={(e) =>
+                      field.onChange(Number(e.target.value) || 1)
+                    }
+                    min={1}
+                    placeholder="10"
+                    type="number"
+                  />
                 </FormControl>
                 <FormDescription>
                   No, of weeks you want to achieve your goal
@@ -189,7 +199,7 @@ export default function CreateRoadmapForm() {
           />
         </div>
         <Button type="submit" className="w-full">
-          Submit
+          {isPending ? "Submitting..." : "Submit"}
         </Button>
       </form>
     </Form>
