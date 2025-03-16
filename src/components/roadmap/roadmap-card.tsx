@@ -45,7 +45,7 @@ const RoadmapCard = ({ data }: { data: RoadmapOnly }) => {
         </div>
         <div>
           <Link
-            href={`roadmap/${data.id}`}
+            href={`journey/${data.id}`}
             className={buttonVariants({ className: "w-full sm:w-fit" })}
           >
             View
