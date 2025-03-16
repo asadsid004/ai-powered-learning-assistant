@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { generateRoadmap, RoadmapInput } from "@/lib/gemini-roadmap";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
-import { error } from "console";
 
 export async function createRoadmap(input: RoadmapInput) {
   const { getUser } = getKindeServerSession();
@@ -198,3 +197,15 @@ export async function updateTaskStatus(taskId: string, isCompleted: boolean) {
     };
   }
 }
+
+export const deleteRoadmap = async (roadmapId: string) => {
+  try {
+    await prisma.roadmap.delete({
+      where: { id: roadmapId },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting roadmap:", error);
+    throw new Error("Failed to delete roadmap");
+  }
+};

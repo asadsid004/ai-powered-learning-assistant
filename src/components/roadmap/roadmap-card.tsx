@@ -10,7 +10,7 @@ import {
 } from "../ui/card";
 import { Badge } from "../ui/badge";
 
-export interface RoadmapOnly {
+export interface RoadmapCard {
   id: string;
   title: string;
   description: string;
@@ -19,13 +19,13 @@ export interface RoadmapOnly {
   progress: number;
 }
 
-const RoadmapCard = ({ data }: { data: RoadmapOnly }) => {
+const RoadmapCard = ({ data }: { data: RoadmapCard }) => {
   return (
     <Card className="hover:shadow-lg overflow-hidden">
       <CardHeader>
         <CardTitle className="text-lg flex flex-col sm:flex-row justify-between gap-2 sm:gap-0">
           <p className="tracking-tight">{data.title}</p>
-          {data.progress === 0 && (
+          {data.progress === 100 && (
             <Badge
               variant="outline"
               className="bg-green-50 text-green-700 border-green-200"
@@ -52,11 +52,11 @@ const RoadmapCard = ({ data }: { data: RoadmapOnly }) => {
           </Link>
         </div>
       </CardContent>
-      <CardFooter></CardFooter>
       <div
-        className="bg-secondary-foreground rounded-tr-xl h-3 -mb-6"
+        className="bg-secondary-foreground h-3 -mb-6"
         style={{
           width: `${data.progress}%`,
+          borderTopRightRadius: `${data.progress !== 100 && 0.5}rem`,
         }}
       />
     </Card>
