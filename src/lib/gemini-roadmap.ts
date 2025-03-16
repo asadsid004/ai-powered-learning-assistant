@@ -132,7 +132,7 @@ export async function generateRoadmap(
     Provide the roadmap in the following structured JSON format:
     \`\`\`json
     {
-      "title": "The title of the roadmap",
+      "title": "The title of the roadmap (try to make the title have the word journey instead of roadmap)",
       "description": "A brief description of the roadmap",
       "goal": "The main goal of the roadmap",
       "durationInWeeks": 12,
