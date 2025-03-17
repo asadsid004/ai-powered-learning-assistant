@@ -10,6 +10,9 @@ const getRoadmaps = async (id: string) => {
     where: {
       userId: id,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return data;
