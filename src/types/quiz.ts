@@ -3,12 +3,14 @@ export interface QuizGenerationInput {
   numQuestions: number;
   description: string;
   difficulty: string;
+  timeLimit: number;
 }
 
 export interface GenerateQuizFromDocumentInput {
   file: Base64URLString;
   difficulty: string;
   numQuestions: number;
+  timeLimit: number;
 }
 
 export interface QuestionOption {

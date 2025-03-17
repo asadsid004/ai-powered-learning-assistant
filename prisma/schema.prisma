@@ -92,6 +92,7 @@ model Quiz {
   userId           String
   attempted        Boolean
   correctQuestions Int?
+  timeLimit        Int
   score            Float?
   questions        Question[]
   report           Report?    @relation(fields: [reportId], references: [id])
@@ -101,7 +102,6 @@ model Quiz {
 model Question {
   id          String   @id @default(cuid())
   text        String
-  type        String
   explanation String?
   quizId      String
   userAnswer  String?

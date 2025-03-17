@@ -146,6 +146,8 @@ export async function generateQuizFromDocument(
   Ensure each question is clear, concise, and relevant to the topic.
   For MULTIPLE_CHOICE questions, provide 4 options, with exactly one being correct.
   Provide brief to detailed explanations for each question.
+  Also keep in mind I am not using markdown to display quiz questions. I am using html elements to display questions and answers.
+  So generate accordingly such that the questions are clear and understandable to read and answer.
 `;
   try {
     const result = await generateObject({
