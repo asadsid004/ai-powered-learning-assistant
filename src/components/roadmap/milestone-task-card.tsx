@@ -75,11 +75,7 @@ export function MilestoneTasks({ tasks }: MilestoneTasksProps) {
                 variant={task.isCompleted ? "secondary" : "default"}
                 onClick={() => toggleTaskCompletion(task.id, task.isCompleted)}
               >
-                {task.isCompleted ? (
-                  <CheckIcon className="w-5 h-5" />
-                ) : (
-                  "Mark as Done"
-                )}
+                {task.isCompleted ? "Undo" : "Mark as Done"}
               </Button>
             </li>
           ))}
