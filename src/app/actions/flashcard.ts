@@ -122,3 +122,15 @@ export async function createFlashcardSetFromDocument(
     };
   }
 }
+
+export const deleteFlashcard = async (flashcardId: string) => {
+  try {
+    await prisma.flashcardSet.delete({
+      where: { id: flashcardId },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting flascard:", error);
+    throw new Error("Failed to delete flashcard");
+  }
+};

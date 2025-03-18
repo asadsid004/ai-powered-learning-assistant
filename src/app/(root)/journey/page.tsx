@@ -38,6 +38,9 @@ const JourneyPage = async () => {
           Create Journey
         </Link>
       </div>
+      <h3 className="mt-4 text-2xl font-semibold tracking-tight">
+        Your Journeys:
+      </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-6 gap-4">
         {data.map((roadmap) => (
           <RoadmapCard key={roadmap.id} data={roadmap} />

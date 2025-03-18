@@ -121,3 +121,110 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@layer utilities {
+  /* 3D Flip Animation Utilities */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+
+  /* Card Container Styles */
+  .flashcard-container {
+    transition: transform 0.3s ease;
+  }
+
+  .flashcard-container:hover {
+    transform: translateY(-5px);
+  }
+
+  /* Text Styles */
+  .answer-text {
+    line-height: 1.6;
+    font-size: 1.05rem;
+  }
+
+  /* Button Styles */
+  .flip-button {
+    transition: all 0.2s ease;
+    opacity: 0.8;
+  }
+
+  .flip-button:hover {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  .carousel-button {
+    transition: all 0.2s ease;
+    opacity: 0.9;
+  }
+
+  .carousel-button:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  /* Tap Indicator Animation */
+  .tap-indicator {
+    opacity: 0.7;
+    animation: float 1.5s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(5px);
+    }
+  }
+
+  /* Page Load Animations */
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .fade-in-delayed {
+    animation: fadeIn 0.5s ease-in-out 0.3s both;
+  }
+
+  .slide-in {
+    animation: slideIn 0.5s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
