@@ -154,3 +154,30 @@ model ResourceLink {
 
   @@index([reportId])
 }
+
+// Flashcard model
+
+model FlashcardSet {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  userId      String
+  flashcards  Flashcard[]
+
+  @@index([userId])
+}
+
+model Flashcard {
+  id             String       @id @default(cuid())
+  front          String
+  back           String
+  hint           String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  flashcardSetId String
+  flashcardSet   FlashcardSet @relation(fields: [flashcardSetId], references: [id], onDelete: Cascade)
+
+  @@index([flashcardSetId])
+}
