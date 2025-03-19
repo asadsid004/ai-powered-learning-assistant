@@ -38,6 +38,9 @@ export default function Flashcard({ flashcard }: { flashcard: flashcard }) {
           >
             <div className="text-center space-y-4 max-w-[90%]">
               <h3 className="text-xl font-semibold">{flashcard.front}</h3>
+              <p className="text-sm text-muted-foreground">
+                Hint: {flashcard.hint}
+              </p>
               <div className="flex items-center justify-center mt-6">
                 <span className="text-sm text-muted-foreground flex items-center gap-2">
                   <span className="tap-indicator">👆</span>

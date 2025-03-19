@@ -19,7 +19,7 @@ import { redirect } from "next/navigation";
 import { createFlashcardSetFromDocument } from "@/app/actions/flashcard";
 
 const formSchema = z.object({
-  numQuestions: z.coerce.number().min(5).max(30),
+  numFlashcards: z.coerce.number().min(5).max(30),
 });
 
 export default function CreateFlashcardFormWithPdf() {
@@ -30,7 +30,7 @@ export default function CreateFlashcardFormWithPdf() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      numQuestions: 5,
+      numFlashcards: 5,
     },
   });
 
@@ -102,7 +102,7 @@ export default function CreateFlashcardFormWithPdf() {
 
         <FormField
           control={form.control}
-          name="numQuestions"
+          name="numFlashcards"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Number of flashcards</FormLabel>

@@ -47,7 +47,7 @@ export async function generateFlashcardsWithoutDocument(
   const prompt = `
     Generate a set of flashcards about ${input.title}.
     ${input.description && `Description: ${input.description}`}
-    Number of Flashcards: ${input.numFlashcards || 10}
+    Number of Flashcards: ${input.numFlashcards}
 
     The response MUST be valid JSON, and ONLY valid JSON. Do not include any surrounding text or explanations.
 
@@ -108,7 +108,7 @@ export async function generateFlashcardsFromDocument(
 ) {
   const prompt = `
   Create a set of flashcards from the document provided.
-  Number of Flashcards: ${input.numFlashcards || 10}
+  Number of Flashcards: ${input.numFlashcards}
 
   The response MUST be valid JSON, and ONLY valid JSON. Do not include any surrounding text or explanations.
 

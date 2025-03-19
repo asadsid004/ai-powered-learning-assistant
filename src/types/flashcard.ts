@@ -6,7 +6,7 @@ export interface FlashcardGenerationInput {
 
 export interface GenerateFlashcardFromDocumentInput {
   file: Base64URLString; // Document file
-  numFlashcards?: number;
+  numFlashcards: number;
 }
 
 export interface Flashcard {
