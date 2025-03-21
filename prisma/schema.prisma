@@ -181,3 +181,30 @@ model Flashcard {
 
   @@index([flashcardSetId])
 }
+
+// Chatpdf schema
+model ChatPdf {
+  id        String    @id @default(uuid())
+  userId    String
+  name      String
+  createdAt DateTime  @default(now())
+  chunks    Chunk[]
+  messages  Message[]
+}
+
+model Chunk {
+  id        String                     @id @default(uuid())
+  chatPdfId String
+  content   String                     @db.Text
+  embedding Unsupported("vector(768)") // Google Embedding Model returns 768-dimension vectors
+  chatPdf   ChatPdf                    @relation(fields: [chatPdfId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  chatPdfId String   @db.Text
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+  chatPdf   ChatPdf  @relation(fields: [chatPdfId], references: [id], onDelete: Cascade)
+}
