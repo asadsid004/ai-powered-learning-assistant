@@ -32,9 +32,8 @@ export function CreateChatPDFForm({ userId }: { userId: string }) {
       });
 
       const data = await res.json();
-      if (data.id) {
-        router.push(`/chatpdf/${data.id}`);
-      }
+
+      router.push(`/chatpdf/${data.id}`);
     } catch (error) {
       console.error("Upload failed:", error);
     } finally {
