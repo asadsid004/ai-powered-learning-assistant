@@ -1,17 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useChat, type UseChatOptions } from "@ai-sdk/react";
 
 import { cn } from "@/lib/utils";
 import { Chat } from "@/components/ui/chat";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 type ChatDemoProps = {
   initialMessages?: UseChatOptions["initialMessages"];

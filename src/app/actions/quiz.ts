@@ -38,6 +38,7 @@ export async function createQuiz(formData: QuizGenerationInput) {
         userId: user.id,
         attempted: false,
         timeLimit: formData.timeLimit,
+        numQuestions: formData.numQuestions,
         questions: {
           create: generatedQuiz.questions.map((question) => ({
             text: question.text,
@@ -109,6 +110,7 @@ export async function createQuizFromDocument(
         userId: user.id,
         attempted: false,
         timeLimit: formData.timeLimit,
+        numQuestions: formData.numQuestions,
         questions: {
           create: generatedQuiz.questions.map((question) => ({
             text: question.text,
@@ -147,6 +149,18 @@ export async function createQuizFromDocument(
     };
   }
 }
+
+export const deleteQuiz = async (quizId: string) => {
+  try {
+    await prisma.quiz.delete({
+      where: { id: quizId },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting quiz:", error);
+    throw new Error("Failed to delete œuiz");
+  }
+};
 
 // Generate explanations for incorrect answers
 

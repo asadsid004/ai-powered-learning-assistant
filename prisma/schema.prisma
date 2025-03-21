@@ -85,12 +85,13 @@ enum ResourceType {
 model Quiz {
   id               String     @id @default(cuid())
   title            String
-  description      String?
+  description      String
   difficulty       String
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
   userId           String
   attempted        Boolean
+  numQuestions     Int
   correctQuestions Int?
   timeLimit        Int
   score            Float?
