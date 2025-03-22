@@ -2,17 +2,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { z } from "zod";
+import { google } from "@ai-sdk/google";
+import { generateObject } from "ai";
 
-type Params = Promise<{ quizId: string }>;
+// Zod schema for AI-generated report
+const GeneratedReportSchema = z.object({
+  summary: z.string(),
+  topicInsights: z.array(
+    z.object({
+      topic: z.string(),
+      insight: z.string(),
+    })
+  ),
+  resourceLinks: z.array(
+    z.object({
+      topic: z.string(),
+      url: z.string(),
+    })
+  ),
+});
+
+type GeneratedReport = z.infer<typeof GeneratedReportSchema>;
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Params }
+  { params }: { params: { quizId: string } }
 ) {
-  const { quizId } = await params;
+  const { quizId } = params;
+
   try {
     const { getUser } = getKindeServerSession();
-
     const user = await getUser();
 
     if (!user) {
@@ -21,16 +41,20 @@ export async function POST(
 
     const { answeredQuestions, correctAnswers, score } = await request.json();
 
-    // Verify the quiz exists and belongs to the user
+    // Validate input
+    if (!Array.isArray(answeredQuestions) || typeof score !== "number") {
+      return NextResponse.json(
+        { error: "Invalid input data" },
+        { status: 400 }
+      );
+    }
+
+    // Verify quiz existence
     const quiz = await prisma.quiz.findUnique({
-      where: {
-        id: quizId,
-      },
+      where: { id: quizId },
       include: {
         questions: {
-          include: {
-            options: true,
-          },
+          include: { options: true },
         },
       },
     });
@@ -39,7 +63,6 @@ export async function POST(
       return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
     }
 
-    // If quiz is already attempted, don't allow resubmission
     if (quiz.attempted) {
       return NextResponse.json(
         { error: "Quiz already attempted" },
@@ -47,30 +70,33 @@ export async function POST(
       );
     }
 
-    // Generate AI summary report
-    // This is a placeholder - you'd implement your own report generation logic
+    // Generate AI report
     const reportData = await generateQuizReport(
       quiz,
       answeredQuestions,
       correctAnswers
     );
 
-    // Start a transaction to update everything atomically
+    // Store in DB using transaction
     const updatedQuiz = await prisma.$transaction(async (tx) => {
-      // Create the report
       const report = await tx.report.create({
         data: {
           summary: reportData.summary,
           topicInsights: {
-            create: reportData.topicInsights,
+            create: reportData.topicInsights.map(({ topic, insight }) => ({
+              topic,
+              insight,
+            })),
           },
           resourceLinks: {
-            create: reportData.resourceLinks,
+            create: reportData.resourceLinks.map(({ topic, url }) => ({
+              topic,
+              url,
+            })),
           },
         },
       });
 
-      // Update user answers
       for (const answered of answeredQuestions) {
         await tx.question.update({
           where: { id: answered.id },
@@ -78,13 +104,12 @@ export async function POST(
         });
       }
 
-      // Update quiz with results
       return tx.quiz.update({
         where: { id: quizId },
         data: {
           attempted: true,
           correctQuestions: correctAnswers,
-          score: score,
+          score,
           reportId: report.id,
         },
       });
@@ -100,135 +125,134 @@ export async function POST(
   }
 }
 
-// Function to generate a quiz report
-// In a real app, you might use an AI service or OpenAI API here
+// Function to generate quiz report using AI
 async function generateQuizReport(
   quiz: any,
   answeredQuestions: any,
-  correctAnswers: any
-) {
-  // Calculate performance percentage
-  const performancePercentage = (correctAnswers / quiz.numQuestions) * 100;
+  correctAnswers: number
+): Promise<GeneratedReport> {
+  try {
+    const questions: string[] = [];
+    const userAnswers: string[] = [];
+    const correctAnswerTexts: string[] = [];
 
-  // Maps answered questions with correct/incorrect info
-  const questionResults = quiz.questions.map((question: any) => {
-    const answeredQuestion = answeredQuestions.find(
-      (aq: any) => aq.id === question.id
-    );
-    const userAnswer = answeredQuestion?.userAnswer || null;
+    quiz.questions.forEach((question: any) => {
+      const answeredQuestion = answeredQuestions.find(
+        (aq: any) => aq.id === question.id
+      );
+      const userAnswerId = answeredQuestion?.userAnswer || null;
+      const selectedOption = question.options.find(
+        (opt: any) => opt.id === userAnswerId
+      );
+      const correctOption = question.options.find((opt: any) => opt.isCorrect);
 
-    // Find the selected option
-    const selectedOption = question.options.find(
-      (opt: any) => opt.id === userAnswer
-    );
+      questions.push(question.text);
+      userAnswers.push(selectedOption?.text || "Not answered");
+      correctAnswerTexts.push(correctOption?.text || "");
+    });
 
-    // Find the correct option
-    const correctOption = question.options.find((opt: any) => opt.isCorrect);
+    const reportInput = {
+      questions,
+      userAnswers,
+      correctAnswers: correctAnswerTexts,
+    };
+    return await generatePersonalizedReport(reportInput);
+  } catch (error) {
+    console.error("Error generating AI report:", error);
 
     return {
-      text: question.text,
-      isCorrect: selectedOption?.isCorrect || false,
-      userAnswer: selectedOption?.text || "Not answered",
-      correctAnswer: correctOption?.text || "",
+      summary: `You answered ${correctAnswers} out of ${quiz.numQuestions} questions correctly.`,
+      topicInsights: [
+        {
+          topic: "General Understanding",
+          insight: "Review key concepts to strengthen your understanding.",
+        },
+      ],
+      resourceLinks: [
+        {
+          topic: "General Understanding",
+          url: "https://example.com/learning-resources",
+        },
+      ],
     };
-  });
-
-  // Group questions by topics (simplified - in real app, you'd have topic info)
-  // For this example, we'll create mock topics
-  const topics = [
-    {
-      name: "Topic 1",
-      questions: questionResults.slice(
-        0,
-        Math.ceil(questionResults.length / 3)
-      ),
-    },
-    {
-      name: "Topic 2",
-      questions: questionResults.slice(
-        Math.ceil(questionResults.length / 3),
-        Math.ceil((2 * questionResults.length) / 3)
-      ),
-    },
-    {
-      name: "Topic 3",
-      questions: questionResults.slice(
-        Math.ceil((2 * questionResults.length) / 3)
-      ),
-    },
-  ];
-
-  // Generate topic insights
-  const topicInsights = topics.map((topic) => {
-    const totalQuestions = topic.questions.length;
-    const correctAnswers = topic.questions.filter(
-      (q: any) => q.isCorrect
-    ).length;
-    const percentage = (correctAnswers / totalQuestions) * 100;
-
-    let insight = "";
-    if (percentage >= 80) {
-      insight = `Strong understanding. You correctly answered ${correctAnswers} out of ${totalQuestions} questions.`;
-    } else if (percentage >= 50) {
-      insight = `Good foundation, but room for improvement. You answered ${correctAnswers} out of ${totalQuestions} questions correctly.`;
-    } else {
-      insight = `This appears to be a challenging area. You answered ${correctAnswers} out of ${totalQuestions} questions correctly.`;
-    }
-
-    return {
-      topic: topic.name,
-      insight,
-    };
-  });
-
-  // Generate resource links
-  const resourceLinks = topics.map((topic) => {
-    // In a real app, you'd have a database of resources or use an API
-    return {
-      topic: topic.name,
-      url: `https://example.com/learn/${topic.name
-        .toLowerCase()
-        .replace(/\s+/g, "-")}`,
-    };
-  });
-
-  // Generate summary
-  let summary = "";
-  if (performancePercentage >= 80) {
-    summary = `Excellent work! You scored ${performancePercentage.toFixed(
-      1
-    )}% (${correctAnswers} out of ${
-      quiz.numQuestions
-    }). You've demonstrated a strong understanding of the material. There are still a few areas where you can improve, but overall your performance is outstanding.`;
-  } else if (performancePercentage >= 60) {
-    summary = `Good job! You scored ${performancePercentage.toFixed(
-      1
-    )}% (${correctAnswers} out of ${
-      quiz.numQuestions
-    }). You've shown a solid grasp of many key concepts, but there are several areas where additional review could strengthen your understanding.`;
-  } else if (performancePercentage >= 40) {
-    summary = `You scored ${performancePercentage.toFixed(
-      1
-    )}% (${correctAnswers} out of ${
-      quiz.numQuestions
-    }). You're on the right track, but there are significant knowledge gaps that need attention. Focus on the topics highlighted below.`;
-  } else {
-    summary = `You scored ${performancePercentage.toFixed(
-      1
-    )}% (${correctAnswers} out of ${
-      quiz.numQuestions
-    }). This material appears challenging for you at this point. Don't worry - the resources below will help you build a stronger foundation. Consider reviewing the fundamental concepts before retaking the quiz.`;
   }
+}
 
-  return {
-    summary,
-    topicInsights: topicInsights.map((ti) => ({
-      topic: ti.topic,
-      insight: ti.insight,
-    })),
-    resourceLinks: resourceLinks.map((rl) => ({
-      topic: rl.topic,
-      url: rl.url,
-    })),
-  };
+// AI report generation function
+async function generatePersonalizedReport(input: {
+  questions: string[];
+  userAnswers: string[];
+  correctAnswers: string[];
+}): Promise<GeneratedReport> {
+  const model = google("gemini-2.0-flash-001", {
+    safetySettings: [
+      {
+        category: "HARM_CATEGORY_HARASSMENT",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE",
+      },
+      {
+        category: "HARM_CATEGORY_HATE_SPEECH",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE",
+      },
+      {
+        category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE",
+      },
+      {
+        category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE",
+      },
+    ],
+    structuredOutputs: true,
+  });
+
+  const prompt = `
+    Generate a structured quiz performance report in JSON format.
+
+    Analyze the following quiz:
+    ${input.questions
+      .map(
+        (question, index) => `
+        Question ${index + 1}: ${question}
+        User's answer: ${input.userAnswers[index] || "Not answered"}
+        Correct answer: ${input.correctAnswers[index]}
+      `
+      )
+      .join("\n")}
+
+    Instructions:
+    - Provide an overall summary of the performance of my quiz in detail.
+    - Identify weak topics based on incorrect answers.
+    - Provide a clear insight for my each weak topic.
+    - Recommend 2-3 learning resources for each weak topic.
+    - Don't use the word the user, it's my response.
+    - Return **only valid JSON** matching this format:
+    
+    \`\`\`json
+    {
+      "summary": "Overall performance summary",
+      "topicInsights": [
+        { "topic": "Topic Name", "insight": "Insight into my misunderstanding" }
+      ],
+      "resourceLinks": [
+        { "topic": "Topic Name", "url": "https://example.com/resource" }
+      ]
+    }
+    \`\`\`
+  `;
+
+  try {
+    const result = await generateObject({
+      model,
+      schemaName: "report",
+      schemaDescription: "AI-generated personalized learning report",
+      schema: GeneratedReportSchema,
+      prompt,
+    });
+
+    return GeneratedReportSchema.parse(result.object);
+  } catch (error: any) {
+    console.error("Error generating personalized report:", error);
+    throw new Error(`Failed to generate report: ${error.message}`);
+  }
 }

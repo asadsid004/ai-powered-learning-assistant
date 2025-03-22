@@ -165,7 +165,6 @@ export const deleteQuiz = async (quizId: string) => {
 // Generate explanations for incorrect answers
 
 interface ReportGenerationInput {
-  userName: string;
   questions: string[];
   userAnswers: string[];
   correctAnswers: string[];
@@ -187,7 +186,7 @@ const GeneratedReportSchema = z.object({
 export async function generatePersonalizedReport(
   input: ReportGenerationInput
 ): Promise<GeneratedReport> {
-  const model = google("gemini-1.5-pro-latest", {
+  const model = google("gemini-2.0-flash-001", {
     safetySettings: [
       {
         category: "HARM_CATEGORY_HARASSMENT",
@@ -210,16 +209,16 @@ export async function generatePersonalizedReport(
   });
 
   const prompt = `
-    Generate a personalized learning report for ${
-      input.userName
-    } based on their quiz performance.
+    Generate a personalized learning report based on their quiz performance.
     
     The quiz included the following questions and answers:
     ${input.questions
       .map(
         (question, index) => `
       Question ${index + 1}: ${question}
-      User's answer: ${input.userAnswers[index]}
+      User's answer: ${
+        input.userAnswers[index] ? input.userAnswers[index] : "Not answered"
+      }
       Correct answer: ${input.correctAnswers[index]}
     `
       )
