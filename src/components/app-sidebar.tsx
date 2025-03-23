@@ -9,6 +9,7 @@ import {
   IconInnerShadowTop,
   IconLayout,
   IconSitemap,
+  IconVocabulary,
 } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -49,6 +50,11 @@ const data = {
       title: "Chat PDF",
       url: "/chatpdf",
       icon: IconFileText,
+    },
+    {
+      title: "Notes",
+      url: "/notes",
+      icon: IconVocabulary,
     },
     {
       title: "Ask AI",
