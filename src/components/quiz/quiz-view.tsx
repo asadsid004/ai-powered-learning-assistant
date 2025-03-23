@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -12,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
+import { CheckCircle, Clock, XCircle } from "lucide-react";
 import { DeleteQuizButton } from "./quiz-delete-button";
 
 // Type definitions based on your Prisma schema
@@ -205,12 +206,14 @@ export default function QuizComponent({ quiz }: { quiz: Quiz }) {
   const currentQuestion = quiz.questions[currentQuestionIndex];
 
   return (
-    <div className="container mx-auto py-6">
-      <Card className="w-full max-w-4xl mx-auto">
+    <div className="mx-auto py-4 px-4">
+      <Card className="w-full max-w-3xl mx-auto">
         <CardHeader>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center gap-2">
             <div>
-              <CardTitle>{quiz.title}</CardTitle>
+              <CardTitle className="text-xl tracking-tight font-bold">
+                {quiz.title}
+              </CardTitle>
               <CardDescription>{quiz.description}</CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -362,6 +365,11 @@ export default function QuizComponent({ quiz }: { quiz: Quiz }) {
                               {option.isCorrect && !isUserSelected && (
                                 <div className="ml-auto text-xs text-green-500 font-medium">
                                   Correct answer
+                                </div>
+                              )}
+                              {option.isCorrect && isUserSelected && (
+                                <div className="ml-auto text-xs text-green-500 font-medium">
+                                  Your answer
                                 </div>
                               )}
                             </div>

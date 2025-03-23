@@ -25,7 +25,7 @@ export function AskAI(props: ChatDemoProps) {
   });
 
   return (
-    <div className={cn("flex", "flex-col", "h-[90vh]", "w-full")}>
+    <div className={cn("flex", "flex-col", "h-[85vh]", "w-full")}>
       <Chat
         className="grow"
         messages={messages}

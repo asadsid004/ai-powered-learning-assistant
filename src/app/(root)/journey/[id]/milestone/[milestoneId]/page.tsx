@@ -1,16 +1,19 @@
 import MilestoneView from "@/components/roadmap/milestone-view";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { prisma } from "@/lib/prisma";
 import {
-  CheckIcon,
-  FileTextIcon,
-  LinkIcon,
-  PlayCircleIcon,
-} from "lucide-react";
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { buttonVariants } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { prisma } from "@/lib/prisma";
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { notFound } from "next/navigation";
-import React from "react";
 
 const getMilestoneData = async (id: string) => {
   const milestone = await prisma.milestone.findUnique({
@@ -36,23 +39,40 @@ const MilestonePage = async ({ params }: { params: Params }) => {
   const { milestoneId } = await params;
   const milestone = await getMilestoneData(milestoneId);
 
-  const getResourceIcon = (type: string) => {
-    switch (type) {
-      case "pdf":
-        return <FileTextIcon className="w-5 h-5 text-red-500" />;
-      case "video":
-        return <PlayCircleIcon className="w-5 h-5 text-blue-500" />;
-      case "link":
-        return <LinkIcon className="w-5 h-5 text-green-500" />;
-      default:
-        return <FileTextIcon className="w-5 h-5 text-gray-500" />;
-    }
-  };
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
 
   return (
-    <div className="p-6 mx-auto max-w-5xl">
-      <MilestoneView milestone={milestone} />
-    </div>
+    <SidebarInset>
+      <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mr-2 h-4" />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink href="/journey">Journey</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink href={`/journey/${milestone.roadmapId}`}>
+                Milestone {milestone.order + 1}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{milestone.title}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="ml-auto flex items-center gap-2">
+          <p>{user.given_name}</p>
+          <LogoutLink className={buttonVariants()}>Logout</LogoutLink>
+        </div>
+      </header>
+      <div className="p-6 mx-auto max-w-5xl">
+        <MilestoneView milestone={milestone} />
+      </div>
+    </SidebarInset>
   );
 };
 

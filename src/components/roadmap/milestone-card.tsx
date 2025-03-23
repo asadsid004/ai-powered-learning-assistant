@@ -11,6 +11,8 @@ import {
 } from "../ui/card";
 import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
+import QuizButton from "../quiz/generate-quiz-button";
+import FlashcardButton from "../flashcard/generate-flashcard-button";
 
 interface MilestoneItemProps {
   milestone: Milestone;
@@ -57,12 +59,22 @@ export function MilestoneItem({ milestone, roadmapId }: MilestoneItemProps) {
               View
             </Link>
             {/* TODO: FIX: Quiz and flashcards directly from roadmap */}
-            <Button className="w-full sm:w-fit" variant="secondary">
-              Quiz
-            </Button>
-            <Button className="w-full sm:w-fit" variant="secondary">
-              Flashcard
-            </Button>
+            <QuizButton
+              formData={{
+                title: milestone.title,
+                description: milestone.description,
+                difficulty: "medium", // You can dynamically set this based on milestone
+                numQuestions: 5, // Adjust as needed
+                timeLimit: 10, // Example: 5 min time limit
+              }}
+            />
+            <FlashcardButton
+              formData={{
+                title: milestone.title,
+                description: milestone.description,
+                numFlashcards: 5,
+              }}
+            />
           </div>
         </div>
       </CardContent>

@@ -42,7 +42,7 @@ export function CreateChatPDFForm({ userId }: { userId: string }) {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center mt-10">
       <Card className="w-96 p-4">
         <CardContent>
           <h2 className="text-xl font-semibold mb-4">Upload a PDF</h2>

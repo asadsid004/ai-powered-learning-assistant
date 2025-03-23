@@ -42,7 +42,7 @@ export async function POST(req: Request, { params }: { params: Params }) {
     // Generate response using Gemini AI
     const chatModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
     const aiResponse = await chatModel.generateContent(
-      `Context from the PDF: ${context}\n\nUser question: ${message}\n\nPlease answer based on the provided context.`
+      `Context from the PDF: ${context}\n\nUser question: ${message}\n\nPlease answer based on the provided context.\nAvoid using markdown. Be very clear in answering the questions.\nUse dots/stars for bullets points whereever needed, like this make responses look clear and easy to understand`
     );
     const responseText = aiResponse.response.text();
 

@@ -10,6 +10,8 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { MilestoneTasks } from "./milestone-task-card";
 import MilestoneResourceCard from "./milestone-resource-card";
+import QuizButton from "../quiz/generate-quiz-button";
+import FlashcardButton from "../flashcard/generate-flashcard-button";
 
 interface MilestoneViewProps {
   milestone: Milestone;
@@ -50,12 +52,22 @@ const MilestoneView = ({ milestone }: MilestoneViewProps) => {
             </div>
             <div className="mt-2 flex flex-col sm:flex-row items-start sm:items-center gap-2">
               {/* TODO: FIX: Quiz and flashcards directly from roadmap */}
-              <Button className="w-full sm:w-fit" variant="secondary">
-                Quiz
-              </Button>
-              <Button className="w-full sm:w-fit" variant="secondary">
-                Flashcard
-              </Button>
+              <QuizButton
+                formData={{
+                  title: milestone.title,
+                  description: milestone.description,
+                  difficulty: "medium", // You can dynamically set this based on milestone
+                  numQuestions: 5, // Adjust as needed
+                  timeLimit: 10, // Example: 5 min time limit
+                }}
+              />
+              <FlashcardButton
+                formData={{
+                  title: milestone.title,
+                  description: milestone.description,
+                  numFlashcards: 5,
+                }}
+              />
             </div>
           </div>
         </CardContent>
