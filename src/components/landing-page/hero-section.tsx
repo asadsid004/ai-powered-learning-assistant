@@ -86,7 +86,7 @@ export function HeroSection() {
                     <path d="m9 12 2 2 4-4" />
                   </svg>
                 </div>
-                <p className="text-sm">Personalized Roadmaps</p>
+                <p className="text-sm">Personalized Journeys</p>
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">

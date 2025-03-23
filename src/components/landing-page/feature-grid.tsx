@@ -42,7 +42,7 @@ export function FeatureGrid() {
           {/* Feature 1: AI-Powered Learning Roadmaps */}
           <FeatureCard
             icon={<Route className="h-6 w-6 text-primary" />}
-            title="AI-Powered Learning Roadmaps"
+            title="AI-Powered Learning Journeys"
             description="Quest AI analyzes your goals, and learning style to create personalized learning paths that adapt as you progress. Our AI identifies knowledge gaps and recommends the most effective resources to help you achieve mastery."
             inView={inView}
             delay={0}

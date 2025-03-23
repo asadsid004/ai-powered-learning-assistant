@@ -31,7 +31,7 @@ export default function Home() {
         <FeatureGrid />
         <CTASection />
       </main>
-      <footer className="w-full border-t bg-background py-6 md:py-12">
+      <footer className="w-full border-t bg-background px-4 py-6 md:py-12">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-2">
             <img src="/logo.svg" width={40} height={40} />
