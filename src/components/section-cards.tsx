@@ -7,6 +7,7 @@ import {
   IconClipboardList,
   IconBook,
   IconBrain,
+  IconCards,
 } from "@tabler/icons-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -128,7 +129,7 @@ export function SectionCards() {
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <IconBrain />
+              <IconCards />
               {stats.flashcardsReviewed > 20
                 ? "Memory Boosting"
                 : "Review More"}
