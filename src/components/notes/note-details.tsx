@@ -6,13 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   deleteNote,
   generateNoteSummary,
@@ -117,46 +111,16 @@ export default function NoteDetail({ note }: NoteDetailProps) {
       >
         <ArrowLeft className="mr-2 h-4 w-4" /> Back to Notes
       </Button>
-
+      <div className="text-sm text-muted-foreground mb-4">
+        Last updated:{" "}
+        {new Intl.DateTimeFormat("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }).format(new Date(note.updatedAt!))}
+      </div>
       <Card className="mb-6">
-        <CardHeader>
-          {isEditing ? (
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="text-xl font-bold"
-              placeholder="Note Title"
-            />
-          ) : (
-            <CardTitle className="text-2xl">{note.title}</CardTitle>
-          )}
-        </CardHeader>
-
-        {note.summary && (
-          <CardContent className="pt-0">
-            <Alert className="bg-muted">
-              <FileText className="h-4 w-4" />
-              <AlertDescription className="ml-2">
-                <strong>Summary:</strong> {note.summary}
-              </AlertDescription>
-            </Alert>
-          </CardContent>
-        )}
-
-        <CardContent>
-          {isEditing ? (
-            <Textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="min-h-[300px]"
-              placeholder="Note Content"
-            />
-          ) : (
-            <div className="whitespace-pre-wrap">{note.content}</div>
-          )}
-        </CardContent>
-
-        <CardFooter className="flex justify-between gap-2">
+        <div className="flex justify-between gap-2 px-6">
           <div>
             {isEditing ? (
               <>
@@ -222,12 +186,44 @@ export default function NoteDetail({ note }: NoteDetailProps) {
               )}
             </Button>
           </div>
-        </CardFooter>
-      </Card>
+        </div>
+        <CardHeader>
+          {isEditing ? (
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="text-xl font-bold"
+              placeholder="Note Title"
+            />
+          ) : (
+            <CardTitle className="text-2xl">{note.title}</CardTitle>
+          )}
+        </CardHeader>
 
-      <div className="text-sm text-muted-foreground">
-        Last updated: {new Date(note.updatedAt).toLocaleString()}
-      </div>
+        {note.summary && (
+          <CardContent className="pt-0">
+            <Alert className="bg-muted">
+              <FileText className="h-4 w-4" />
+              <AlertDescription className="ml-2">
+                <strong>Summary:</strong> {note.summary}
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        )}
+
+        <CardContent>
+          {isEditing ? (
+            <Textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="min-h-[300px]"
+              placeholder="Note Content"
+            />
+          ) : (
+            <div className="whitespace-pre-wrap">{note.content}</div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

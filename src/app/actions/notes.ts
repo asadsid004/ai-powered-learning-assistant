@@ -3,9 +3,10 @@
 import { prisma } from "@/lib/prisma";
 import { google } from "@ai-sdk/google";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { generateText } from "ai";
+import { generateObject, generateText } from "ai";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 
 export async function createNote(formData: { title: string; content: string }) {
   try {
@@ -50,6 +51,13 @@ type NoteInput = {
 
 export async function updateNote(id: string, data: Partial<NoteInput>) {
   try {
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
+
+    if (!user) {
+      return redirect("/api/auth/login");
+    }
+
     const note = await prisma.note.update({
       where: { id },
       data: {
@@ -71,6 +79,13 @@ export async function updateNote(id: string, data: Partial<NoteInput>) {
 // Delete a note
 export async function deleteNote(id: string) {
   try {
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
+
+    if (!user) {
+      return redirect("/api/auth/login");
+    }
+
     await prisma.note.delete({
       where: { id },
     });
@@ -89,19 +104,26 @@ export async function generateNoteSummary(
   note: Partial<NoteInput>
 ) {
   try {
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
+
+    if (!user) {
+      return redirect("/api/auth/login");
+    }
+
     // Fetch the note
 
     const model = google("gemini-2.0-flash-001");
     // Generate summary using Gemini
     const prompt = `
-    Please generate a concise summary (1-3 sentences) of the following note:
+    Please generate a concise summary of the following note:
 
     Title: ${note.title}
 
     Content:
     ${note.content}
 
-    Provide only the summary without any additional explanations.
+    Provide only the summary without any additional explanations and do not miss any major points.
     `;
 
     const result = await generateText({ model, prompt });
@@ -118,5 +140,54 @@ export async function generateNoteSummary(
   } catch (error) {
     console.error("Failed to generate summary:", error);
     return { success: false, error: "Failed to generate summary" };
+  }
+}
+
+const NoteSchema = z.object({
+  title: z.string().nonempty(),
+  content: z.string().nonempty(),
+});
+
+export async function saveChatAsNote(messages: any) {
+  try {
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
+
+    if (!user) {
+      return redirect("/api/auth/login");
+    }
+
+    const conversationText = messages
+      .map((msg: any) => `${msg.role}: ${msg.content}`)
+      .join("\n");
+
+    // Generate a structured note using Gemini
+    const model = google("gemini-2.0-flash-001");
+    const prompt = `Convert the following conversation into a structured note with a clear title and detailed content:\n\n${conversationText}.\nAvoid using markdown. Be very clear in creating the note.\nUse -/
+    dots/stars for bullets points whereever needed, like this make responses look clear and easy to understand, if not needed avoid`;
+
+    const aiResponse = await generateObject({
+      model,
+      prompt,
+      schema: NoteSchema,
+    });
+
+    if (!aiResponse.object) {
+      throw new Error("Failed to generate note summary");
+    }
+
+    const { title, content } = aiResponse.object;
+
+    // Save the note to the database
+    await prisma.note.create({
+      data: {
+        title: title || "Generated Note",
+        content: content || conversationText,
+        userId: user.id,
+      },
+    });
+  } catch (error) {
+    console.error("Error saving chat as note:", error);
+    throw new Error("Failed to save chat as a note");
   }
 }

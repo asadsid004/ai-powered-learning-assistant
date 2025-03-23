@@ -1,9 +1,13 @@
 "use client";
 
 import { useChat, type UseChatOptions } from "@ai-sdk/react";
-
 import { cn } from "@/lib/utils";
 import { Chat } from "@/components/ui/chat";
+import { Button } from "@/components/ui/button";
+import { saveChatAsNote } from "@/app/actions/notes";
+import { useState } from "react";
+import { Toaster, toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 type ChatDemoProps = {
   initialMessages?: UseChatOptions["initialMessages"];
@@ -24,8 +28,43 @@ export function AskAI(props: ChatDemoProps) {
     api: "/api/chat",
   });
 
+  const [isSaving, setIsSaving] = useState(false);
+
+  async function handleSave() {
+    try {
+      setIsSaving(true);
+      toast.loading("Saving conversation to notes...");
+
+      await saveChatAsNote(messages);
+
+      toast.dismiss();
+      toast.success("Conversation saved to notes");
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Failed to save conversation");
+      console.error("Error saving chat:", error);
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
   return (
-    <div className={cn("flex", "flex-col", "h-[85vh]", "w-full")}>
+    <div className={cn("flex", "flex-col", "h-[80vh]", "w-full")}>
+      <div className="flex justify-end p-2">
+        <Button
+          onClick={handleSave}
+          disabled={isSaving || messages.length === 0}
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            "Save"
+          )}
+        </Button>
+      </div>
       <Chat
         className="grow"
         messages={messages}

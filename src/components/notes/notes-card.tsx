@@ -6,6 +6,7 @@ export interface QuizCard {
   id: string;
   title: string;
   content: string;
+  updatedAt: string;
 }
 
 const NoteCard = ({ data }: { data: QuizCard }) => {
@@ -18,12 +19,21 @@ const NoteCard = ({ data }: { data: QuizCard }) => {
         <CardDescription className="line-clamp-2">
           {data.content}
         </CardDescription>
-        <Link
-          href={`notes/${data.id}`}
-          className={buttonVariants({ className: "w-full sm:w-fit" })}
-        >
-          View
-        </Link>
+        <div className="flex flex-col sm:flex-row gap-2 justify-between items-start sm:items-center">
+          <p className="text-xs">
+            {new Intl.DateTimeFormat("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            }).format(new Date(data.updatedAt!))}
+          </p>
+          <Link
+            href={`notes/${data.id}`}
+            className={buttonVariants({ className: "w-full sm:w-fit" })}
+          >
+            View
+          </Link>
+        </div>
       </CardContent>
     </Card>
   );
