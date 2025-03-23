@@ -25,11 +25,13 @@ const GeneratedReportSchema = z.object({
 
 type GeneratedReport = z.infer<typeof GeneratedReportSchema>;
 
+type Params = Promise<{ quizId: string }>;
+
 export async function POST(
   request: NextRequest,
-  { params }: { params: { quizId: string } }
+  { params }: { params: Params }
 ) {
-  const { quizId } = params;
+  const { quizId } = await params;
 
   try {
     const { getUser } = getKindeServerSession();
