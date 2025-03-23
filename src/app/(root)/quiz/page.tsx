@@ -60,11 +60,17 @@ const QuizPage = async () => {
       <h3 className="mt-4 text-2xl font-semibold tracking-tight px-4">
         Your Quizzes:
       </h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-4 gap-4 px-4">
-        {data.map((roadmap) => (
-          <QuizCard key={roadmap.id} data={roadmap} />
-        ))}
-      </div>
+      {data.length !== 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-4 gap-4 px-4">
+          {data.map((roadmap) => (
+            <QuizCard key={roadmap.id} data={roadmap} />
+          ))}
+        </div>
+      ) : (
+        <div className="flex items-center justify-center text-base mt-10">
+          No quizzes yet. Create a quiz
+        </div>
+      )}
     </SidebarInset>
   );
 };

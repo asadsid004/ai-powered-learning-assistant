@@ -64,7 +64,7 @@ const SpecificNotesPage = async ({ params }: { params: Params }) => {
           <LogoutLink className={buttonVariants()}>Logout</LogoutLink>
         </div>
       </header>
-      <div className="px-4">
+      <div className="px-4 mx-auto">
         <NoteDetail note={note} />
       </div>
     </SidebarInset>

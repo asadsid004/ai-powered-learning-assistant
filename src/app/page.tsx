@@ -11,7 +11,7 @@ import {
 export default function Home() {
   return (
     <div className="flex min-h-screen mx-auto flex-col items-center">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 px-2 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container max-w-5xl flex h-16 items-center justify-between mx-auto">
           <div className="flex items-center gap-2">
             <Image src="/logo.svg" alt="logo" width={50} height={40} />

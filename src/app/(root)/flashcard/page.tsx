@@ -60,11 +60,17 @@ const FlashcardPage = async () => {
       <h3 className="mt-4 text-2xl font-semibold tracking-tight px-4">
         Your Flashcards:
       </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-4 gap-4 px-4">
-        {data.map((flashcardSet) => (
-          <FlashcardSetCard key={flashcardSet.id} data={flashcardSet} />
-        ))}
-      </div>
+      {data.length !== 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-4 gap-4 px-4">
+          {data.map((flashcardSet) => (
+            <FlashcardSetCard key={flashcardSet.id} data={flashcardSet} />
+          ))}
+        </div>
+      ) : (
+        <div className="flex items-center justify-center text-base mt-10">
+          No flashcards yet. Create a flashcard
+        </div>
+      )}
     </SidebarInset>
   );
 };
