@@ -23,6 +23,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import Image from "next/image";
+import Link from "next/link";
 
 const data = {
   navMain: [
@@ -74,10 +76,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="/dashboard">
-                <IconInnerShadowTop className="!size-6" />
+              <Link href="/dashboard">
+                <Image src="/logo.svg" width={40} height={40} alt="logo" />
                 <span className="text-xl font-semibold">Quest ai</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
