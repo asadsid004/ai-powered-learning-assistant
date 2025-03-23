@@ -19,7 +19,7 @@ model Roadmap {
   description       String
   goal              String
   currentSkillLevel String
-  timeCommitment    String
+  timeCommitment    Int
   durationInWeeks   Int
   userId            String
   milestones        Milestone[]

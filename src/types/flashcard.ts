@@ -1,7 +1,7 @@
 export interface FlashcardGenerationInput {
   title: string;
   description?: string;
-  numFlashcards?: number;
+  numFlashcards: number;
 }
 
 export interface GenerateFlashcardFromDocumentInput {

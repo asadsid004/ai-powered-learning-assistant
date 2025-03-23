@@ -23,7 +23,7 @@ import { createFlashcardSet } from "@/app/actions/flashcard";
 const formSchema = z.object({
   title: z.string().min(1).min(2).max(50),
   description: z.string().min(10).max(250).optional(),
-  numQuestions: z.number().min(5).max(30),
+  numFlashcards: z.number().min(5).max(30),
 });
 
 export default function CreateFlashcardForm() {
@@ -34,7 +34,7 @@ export default function CreateFlashcardForm() {
     defaultValues: {
       title: "",
       description: "",
-      numQuestions: 5,
+      numFlashcards: 5,
     },
   });
 
@@ -93,7 +93,7 @@ export default function CreateFlashcardForm() {
 
         <FormField
           control={form.control}
-          name="numQuestions"
+          name="numFlashcards"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Number of flashcard</FormLabel>

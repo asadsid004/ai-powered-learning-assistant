@@ -7,7 +7,7 @@ export interface RoadmapInput {
   goal: string;
   description: string;
   currentSkillLevel: string;
-  timeCommitment: string;
+  timeCommitment: number;
   durationInWeeks: number;
 }
 
@@ -123,7 +123,7 @@ export async function generateRoadmap(
     Description: ${input.description}
     Goal: ${input.goal}
     Current Skill Level: ${input.currentSkillLevel}
-    Time Commitment: ${input.timeCommitment}
+    Time Commitment: ${input.timeCommitment} Hours
     Total Duration: ${input.durationInWeeks} weeks
     Today's date: ${todayISO}  // Important: Include the date!
 

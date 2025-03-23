@@ -32,7 +32,7 @@ const formSchema = z.object({
   goal: z.string().min(1).min(2).max(200),
   description: z.string().min(10).max(500),
   currentSkillLevel: z.string(),
-  timeCommitment: z.string().min(1).min(2).max(10),
+  timeCommitment: z.number().min(1),
   durationInWeeks: z.number().min(1).max(100),
 });
 
@@ -46,7 +46,7 @@ export default function CreateRoadmapForm() {
       goal: "",
       description: "",
       currentSkillLevel: "",
-      timeCommitment: "",
+      timeCommitment: 5,
       durationInWeeks: 1, // Provide a default number
     },
   });
@@ -165,7 +165,13 @@ export default function CreateRoadmapForm() {
               <FormItem>
                 <FormLabel>Time Commitment</FormLabel>
                 <FormControl>
-                  <Input placeholder="40Hrs" type="text" {...field} />
+                  <Input
+                    placeholder="40"
+                    defaultValue={field.value}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                    min={1}
+                    type="number"
+                  />
                 </FormControl>
                 <FormDescription>
                   Your no. of hours you want to put in
@@ -200,7 +206,7 @@ export default function CreateRoadmapForm() {
             )}
           />
         </div>
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isPending}>
           {isPending ? "Submitting..." : "Submit"}
         </Button>
       </form>

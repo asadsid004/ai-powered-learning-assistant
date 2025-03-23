@@ -16,7 +16,7 @@ import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { notFound } from "next/navigation";
 
-type Params = Promise<{ id: string }>;
+type Params = Promise<{ flashcardId: string }>;
 
 async function getFlashcardData(id: string) {
   const flashcard = await prisma.flashcardSet.findFirst({
@@ -36,8 +36,8 @@ async function getFlashcardData(id: string) {
 }
 
 const SpecificFlashcardPage = async ({ params }: { params: Params }) => {
-  const { id } = await params;
-  const flashcard = await getFlashcardData(id);
+  const { flashcardId } = await params;
+  const flashcard = await getFlashcardData(flashcardId);
 
   const { getUser } = getKindeServerSession();
   const user = await getUser();

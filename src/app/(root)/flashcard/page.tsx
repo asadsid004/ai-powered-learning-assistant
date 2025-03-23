@@ -61,7 +61,7 @@ const FlashcardPage = async () => {
         Your Flashcards:
       </h3>
       {data.length !== 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-4 gap-4 px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-4 gap-4 px-4">
           {data.map((flashcardSet) => (
             <FlashcardSetCard key={flashcardSet.id} data={flashcardSet} />
           ))}

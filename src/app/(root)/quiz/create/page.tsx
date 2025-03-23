@@ -34,11 +34,11 @@ const CreateQuizPage = async () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="/journey">Journey</BreadcrumbLink>
+              <BreadcrumbLink href="/quiz">Quiz</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
-              <BreadcrumbPage>Create Journey</BreadcrumbPage>
+              <BreadcrumbPage>Create Quiz</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>

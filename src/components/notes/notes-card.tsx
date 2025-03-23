@@ -6,7 +6,7 @@ export interface QuizCard {
   id: string;
   title: string;
   content: string;
-  updatedAt: string;
+  updatedAt: Date;
 }
 
 const NoteCard = ({ data }: { data: QuizCard }) => {
