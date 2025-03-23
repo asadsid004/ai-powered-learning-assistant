@@ -22,13 +22,10 @@ export function AskAI(props: ChatDemoProps) {
   } = useChat({
     ...props,
     api: "/api/chat",
-    body: {
-      model: "google-2.0-flash",
-    },
   });
 
   return (
-    <div className={cn("flex", "min-h-[90vh]", "flex-col", "w-full")}>
+    <div className={cn("flex", "flex-col", "h-[90vh]", "w-full")}>
       <Chat
         className="grow"
         messages={messages}
