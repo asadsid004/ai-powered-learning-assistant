@@ -62,18 +62,18 @@ export async function createQuiz(formData: QuizGenerationInput) {
     });
 
     // Revalidate the quizzes page to show the new quiz
-    revalidatePath("/quiz");
+    revalidatePath("/notes");
 
     return {
       success: true,
       quiz,
-      message: "Quiz created successfully!",
+      message: "Notes created successfully!",
     };
   } catch (error: any) {
-    console.error("Error creating quiz:", error);
+    console.error("Error creating note:", error);
     return {
       success: false,
-      message: error.message || "Failed to create quiz",
+      message: error.message || "Failed to create note",
     };
   }
 }

@@ -209,3 +209,15 @@ model Message {
   createdAt DateTime @default(now())
   chatPdf   ChatPdf  @relation(fields: [chatPdfId], references: [id], onDelete: Cascade)
 }
+
+// Notes schema
+
+model Note {
+  id        String   @id @default(uuid())
+  title     String
+  userId    String
+  content   String   @db.Text // Using Text type for longer content
+  summary   String?  @db.Text // Optional summarization field
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
